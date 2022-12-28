@@ -5,7 +5,20 @@ use actix_web::{
 };
 use serde::{Deserialize, Serialize};
 use sqlx::{self, FromRow};
+use uuid::Uuid;
 use crate::AppState;
+
+#[derive(Serialize, FromRow)]
+struct artist {
+    name: String,
+}
+
+#[derive(Serialize, FromRow)]
+struct Album {
+    name: String,
+    songs: u32,
+    artist: Uuid
+}
 
 
 #[get("/artists")]
