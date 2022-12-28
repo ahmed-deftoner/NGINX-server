@@ -1,5 +1,5 @@
 use actix::fut::ok;
-use actix_web::{web::Data, App, HttpServer};
+use actix_web::{web::Data, App, HttpServer, http};
 use dotenv::dotenv;
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 
@@ -19,6 +19,15 @@ async fn main() -> std::io::Result<()> {
         .connect(&database_url)
         .await
         .expect("error building connection pool");
-    
-    ok();
+    HttpServer::new(move || {
+        App::new()
+            .app_data(Data::new(AppState { db: pool.clone()}))
+            .service(get_artists)
+            .service(create_artist)
+            .service(get_album)
+            .service(create_album)
+    })
+    .bind(("127.0.0.1", 8080))?
+    .run()
+    .await
 }
