@@ -9,7 +9,7 @@ use uuid::Uuid;
 use crate::AppState;
 
 #[derive(Serialize, FromRow)]
-struct artist {
+struct Artist {
     name: String,
 }
 
@@ -23,7 +23,13 @@ struct Album {
 
 #[get("/artists")]
 pub async fn get_artists(state: Data<AppState>) -> impl Responder {
-    HttpResponse::Ok().json("get artist")
+    match sqlx::query_as::<_, artist>("SELECT id, name FROM artists")
+        .fetch_all(&state.db)
+        .await
+    {
+        Ok(users) => HttpResponse::Ok().json(users),
+        Err(_) => HttpResponse::NotFound().json("No artists found"),
+    }
 }
 
 
