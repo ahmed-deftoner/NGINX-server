@@ -4,6 +4,7 @@ use dotenv::dotenv;
 use sqlx::{postgres::PgPoolOptions, Pool, Postgres};
 
 mod routes;
+use routes::{get_album, get_artists, create_album, create_artist};
 
 
 pub struct AppState {
